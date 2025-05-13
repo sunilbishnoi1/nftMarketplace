@@ -1,9 +1,11 @@
-import NftCard from "./components/NftCard"
-
+// import NftCard from "./components/NftCard"
+import Header from "./components/Header"
+import Middle from "./components/Middle"
 function App (){
   return (
     <div className="min-h-screen">
-      <NftCard />
+      <Header />
+      <Middle />
     </div>
   )
 }
