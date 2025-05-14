@@ -64,5 +64,3 @@ src/
 - Follow TypeScript best practices
 - Run linter before commits
 - Keep components small and focused
-
-
