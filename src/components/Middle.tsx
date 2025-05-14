@@ -1,45 +1,39 @@
-import React from 'react';
+import React from "react";
 const Middle: React.FC = () => {
   return (
-    <div className="middle">
-      <h2>Buy and Sell Digital Arts, NFT Collections</h2>
-      <p>Mint and collect the hottest NFTs around.</p>
-
+    <div className="bg-gradient-to-br from-[#10001a] to-[#190727] justify-between mx-auto py-10 items-center ">
+      <div className="justify-center items-center">
+      <div>
+      <h2 className="text-[#d1aaff] text-5xl font-bold text-center">
+        Buy and Sell Digital Arts, NFT Collections
+      </h2>
+      <p className="text-gray-500 font-semibold text-sm mt-3 text-center">
+        Mint and collect the hottest NFTs around.
+      </p>
+    </div>
       {/* Call to Action Button */}
-      <button className="create-nft">Create NFT</button>
+      <button className="px-6 py-3 bg-gradient-to-r from-[#3f0d63] to-[#1a0033] rounded-lg text-white text-base cursor-pointer mx-auto block mt-5 hover:from-[#5b009f] hover:to-[#320067] hover:shadow-[0_4px_12px_rgba(94,33,140,0.3)] transition-all duration-300">
+        Create NFT
+      </button>
+      </div>
 
-      {/* Statistics Section - Now in Horizontal Layout */}
-      <div className="stats">
-        <div className="stat">
-          <h3>123k</h3>
-          <p>Users</p>
+      {/* Stats Section */}
+      <div className="flex justify-center gap-10 items-center mb-8 mt-8">
+        <div className="bg-[rgba(60,20,100,0.3)] p-4 rounded-lg min-w-[120px]">
+          <h3 className="text-xl text-white font-bold">123k</h3>
+          <p className="text-white">Users</p>
         </div>
-        <div className="stat">
-          <h3>152k</h3>
-          <p>Artworks</p>
+        <div className="bg-[rgba(60,20,100,0.3)] p-4 rounded-lg min-w-[120px]">
+          <h3 className="text-xl text-white font-bold">152k</h3>
+          <p className="text-white">Artworks</p>
         </div>
-        <div className="stat">
-          <h3>200k</h3>
-          <p>Artists</p>
+        <div className="bg-[rgba(60,20,100,0.3)] p-4 rounded-lg min-w-[120px]">
+          <h3 className="text-xl text-white font-bold">200k</h3>
+          <p className="text-white">Artists</p>
         </div>
       </div>
 
-      {/* Latest Artworks Section */}
-      <div className="latest-artworks">
-        <h2>Latest Artworks</h2>
-        <div className="artwork-grid">
-          <div className="main-artwork">
-            {/* NFT Main Image */}
-            <img src="logo192.png" alt="Main Artwork" className="animated-image" />
-          </div>
-          <div className="artwork-row">
-            <img src="mix.png" alt="Artwork 1" className="animated-image" />
-            <img src="mix.png" alt="Artwork 2" className="animated-image" />
-            <img src="mix.png" alt="Artwork 3" className="animated-image" />
-            <img src="mix.png" alt="Artwork 4" className="animated-image" />
-          </div>
-        </div>
-      </div>
+      
     </div>
   );
 };
