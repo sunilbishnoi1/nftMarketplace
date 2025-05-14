@@ -2,6 +2,8 @@
 import Header from "./components/Header"
 import Middle from "./components/Middle"
 import Artworks from "./components/Artworks"
+import Transaction from "./components/Transaction"
+import Footer from "./components/Footer"
 function App (){
   return (
     <div className="min-h-screen">
@@ -10,6 +12,8 @@ function App (){
       <Middle />
       </div>
       <Artworks />
+      <Transaction/>
+      <Footer/>
     </div>
   )
 }
