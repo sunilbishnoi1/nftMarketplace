@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import NFTForm from "./NFT"; // Import NFTForm component
+import NFTForm from "./CreateNFT"; // Import NFTForm component
 
 const Middle: React.FC = () => {
     const [showNFTForm, setShowNFTForm] = useState(false);
@@ -36,8 +36,8 @@ const Middle: React.FC = () => {
                 {/* Stats */}
                 {[["123k", "Users"], ["152k", "Artworks"], ["200k", "Artists"]].map(([count, label]) => (
                     <div key={label} className="bg-[rgba(60,20,100,0.3)] p-4 rounded-lg min-w-[120px]">
-                        <h3 className="text-xl text-white font-bold">{count}</h3>
-                        <p className="text-white">{label}</p>
+                        <h3 className="text-xl text-white text-center font-bold">{count}</h3>
+                        <p className="text-white text-center">{label}</p>
                     </div>
                 ))}
             </div>

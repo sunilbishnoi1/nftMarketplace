@@ -33,6 +33,7 @@
 - [ ] Collection management
 - [ ] Transaction history
 - [ ] Price history charts
+- [ ] Artists, Features, Community page
 
 ## Phase 4: User Experience
 
