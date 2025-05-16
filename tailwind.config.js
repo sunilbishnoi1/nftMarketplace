@@ -22,6 +22,8 @@ module.exports = {
         'slide-in': 'slide-in 0.5s ease-out',
         'fadeIn': 'fadeIn 0.8s forwards',
         'floatUp': 'floatUp 3s infinite alternate ease-in-out',
+        'floatAnimation': 'floatAnimation 4s infinite ease-in-out',
+        'floatRotate': 'floatRotate 4s infinite ease-in-out',
       },
       keyframes: {
         'slide-in': {
@@ -51,7 +53,16 @@ module.exports = {
           'to': {
             'transform': 'translateY(-8px)'
           }
-        }
+        },
+        'floatAnimation': {
+          '0%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-15px)' }, 
+          '100%': { transform: 'translateY(0px)' },
+        },
+        'floatRotate': { 
+          '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+          '50%': { transform: 'translateY(-15px) rotate(4deg)' }, 
+        },
       },
       boxShadow: {
         'purple': '0px 3px 10px rgba(94, 33, 140, 0.4)',
