@@ -10,6 +10,7 @@ import Features from "./pages/Features";
 import UpdateNFT from "./components/UpdateNFT";
 import Loading from "./components/Loading";
 import Alert from "./components/Alert"; // ✅ Import Alert
+import Owner from "./components/owner"; // ✅ Import the new Owner component
 import { useGlobalState } from "./store";
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
             <>
               <Middle />
               <Artworks />
+              <Owner/>
               <Transactions />
             </>
           }

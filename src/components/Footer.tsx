@@ -1,29 +1,53 @@
+import React from "react";
+
 const Footer = () => {
     return (
-        <footer className="bg-gradient-to-r from-[#10001a] to-[#d1aaff] p-4 w-full flex md:justify-center justify-between items-center flex-col">
-    <div className="w-full flex sm:flex-row flex-col justify-between items-center my-4">
-        {/* Logo */}
-        <div className="flex flex-[0.25] justify-center items-center">
-            <img src="demo2.png" alt="Aurora Logo" className="w-24" />
-        </div>
+        <footer className="bg-[#6b3874] text-black text-center py-8 flex flex-col md:flex-row items-center justify-end px-12">
+            {/* Left-Side Image (Unchanged) */}
+            <div className="w-1/5 flex justify-center">
+                <img src="/demo2.png" alt="Aurora Logo" className="w-70 h-auto rounded-md shadow-md" />
+            </div>
 
-        {/* Navigation Links */}
-        <nav className="flex flex-1 justify-evenly items-center flex-wrap sm:mt-0 mt-5 w-full text-[#10001a] font-semibold uppercase">
-            <a href="#" className="text-center mx-2 hover:text-[#aa66ff] transition">Market</a>
-            <a href="#" className="text-center mx-2 hover:text-[#aa66ff] transition">Artists</a>
-            <a href="#" className="text-center mx-2 hover:text-[#aa66ff] transition">Features</a>
-            <a href="#" className="text-center mx-2 hover:text-[#aa66ff] transition">Community</a>
-        </nav>
+            {/* Support & Navigation Links (Increased Spacing) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-sm w-4/5 pl-16">
+                <div className="mb-6">  {/* Added Bottom Margin for Extra Spacing */}
+                    <h3 className="font-semibold mb-4 text-[#0a030b]">Support</h3>
+                    <ul className="space-y-3">
+                        <li><a href="#" className="text-[#cb3aef] hover:text-[#3b1846] transition">Help Center</a></li>
+                        <li><a href="#" className="text-[#cb3aef] hover:text-[#3b1846] transition">Aurora.xyz</a></li>
+                    </ul>
+                </div>
 
-        {/* Rights Reserved */}
-        <div className="flex flex-[0.25] justify-center items-center pt-4">
-            <p className="text-[#10001a] text-right text-sm opacity-80">
-            © 2025 All rights reserved
-            </p>
-        </div>
-    </div>
-</footer>
+                <div>
+                    <h3 className="font-semibold mb-4 text-[#0a030b]">Legal</h3>
+                    <ul className="space-y-3">
+                        <li><a href="#" className="text-[#cb3aef] hover:text-[#3b1846] transition">Terms of Service</a></li>
+                        <li><a href="#" className="text-[#cb3aef] hover:text-[#3b1846] transition">Privacy Notice</a></li>
+                        <li><a href="#" className="text-[#cb3aef] hover:text-[#3b1846] transition">Report Content</a></li>
+                    </ul>
+                </div>
 
+                <div>
+                    <h3 className="font-semibold mb-4 text-[#0a030b]">Community</h3>
+                    <ul className="space-y-3">
+                        <li><a href="#" className="text-[#cb3aef] hover:text-[#3b1846] transition">Community Guidelines</a></li>
+                        <li><a href="#" className="text-[#cb3aef] hover:text-[#3b1846] transition">Private Sales</a></li>
+                        <li><a href="#" className="text-[#cb3aef] hover:text-[#3b1846] transition">$AURORA Bridge</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            {/* Social Media Links (Increased Spacing) */}
+            <div className="mt-12 ml-35 flex justify-center gap-8 text-lg w-full px-16">
+                <a href="#" className="text-[#cb3aef] hover:text-[#3b1846] transition">🐦 Twitter</a>
+                <a href="#" className="text-[#cb3aef] hover:text-[#3b1846] transition">📸 Instagram</a>
+                <a href="#" className="text-[#cb3aef] hover:text-[#3b1846] transition">🎥 YouTube</a>
+                <a href="#" className="text-[#cb3aef] hover:text-[#3b1846] transition">👾 Reddit</a>
+            </div>
+
+            {/* Copyright Notice (Maintained Clean Spacing) */}
+            <p className="mt-6 text-xs w-full text-[#cb3aef] px-90">&copy; 2025 Aurora - All Rights Reserved</p>
+        </footer>
     );
 };
 
