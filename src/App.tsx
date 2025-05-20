@@ -10,6 +10,7 @@ import Features from "./pages/Features"
 import UpdateNFT from "./components/UpdateNFT";
 import Loading from "./components/Loading";
 import { useGlobalState } from "./store";
+import CreateNFT from "./components/CreateNFT";
 
 function App (){
   const [loadingState] = useGlobalState('loading');
@@ -32,7 +33,6 @@ function App (){
         <Route path="/features" element={<Features />} />
         <Route path="/community" element={<Community />} />
       </Routes>
-      
       <UpdateNFT />
       <Footer />
       {loadingState.show && <Loading />}

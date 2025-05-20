@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {FaBars} from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useGlobalState, setGlobalState, setAlert, truncate } from "../store";
+import { connectWallet, isWalletConnected } from "../Blockchain.services";
 
 const Header: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -78,12 +79,12 @@ const Header: React.FC = () => {
                     className="py-2 px-4 rounded-md bg-red-500/30 text-sm text-white font-semibold hover:bg-red-500/50 transition-all duration-300"
                     title="Disconnect Wallet"
                 >
-                    Disconnect Wallet
+                    Disconnect
                 </button>
             </div>
           ) : (
             <button
-              onClick={handleConnectWallet}
+              onClick={connectWallet}
               className="py-2 px-4 rounded-md bg-gradient-to-r from-[#2b003b] to-[#10001a] text-sm text-white font-semibold hover:from-[#4e0070] hover:to-[#220035] hover:shadow-lg transition-all duration-300"
             >
               Connect Wallet

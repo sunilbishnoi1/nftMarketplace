@@ -1,8 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ShowNFT from "./ShowNFT"; 
 import type { NftType } from "../store";
+import { setGlobalState, useGlobalState } from "../store";
 
 const Artworks = () => {
+    const [nfts] = useGlobalState('nfts');
+    const [end,setEnd] = useState(4);
+    const [count] = useState(4)
+    const [collection,setCollection] = useState<NftType[]>([])
+
+    const getCollection = () => {
+        return nfts.slice(0,end)
+    }
+
+    useEffect(() => {
+        setCollection(getCollection());
+    }, [nfts,end]);
+
+
     // Example NFT data - will replace later with useGlobalState('nft') data
     const artworksData: NftType[] = Array.from({ length: 4 }).map((_, index) => ({
         id: `artwork-${index + 1}`,
@@ -23,13 +38,14 @@ const Artworks = () => {
                 </h4>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-4">
-                    {artworksData.map((nftItem) => ( 
-                        <Card key={nftItem.id} nft={nftItem} />
+                    {collection.map((nft, i) => ( 
+                        <Card key={i} nft={nft} />
                     ))}
                 </div>
 
                 <button 
-                    className="bg-[#d1aaff] text-[#10001a] px-4 py-2 mt-6 rounded-md font-semibold hover:bg-[#aa66ff] transition mx-auto block">
+                    className="bg-[#d1aaff] text-[#10001a] px-4 py-2 mt-6 rounded-md font-semibold hover:bg-[#aa66ff] transition mx-auto block"
+                    onClick={() => setEnd(end + count)} >
                     Load More
                 </button>
             </div>
@@ -39,12 +55,16 @@ const Artworks = () => {
 };
 
 const Card = ({ nft }: { nft: NftType }) => { 
-    const [showModal, setShowModal] = useState(false);
+    const setNFT = () => {
+        setGlobalState('nft', nft);
+        setGlobalState('showModal', 'scale-100');
+    }
+    // const [showModal, setShowModal] = useState(false);
 
     return (
         <>
             <div className="bg-gradient-to-br from-[#1a032a] via-[#10001a] to-[#190727] rounded-xl p-4 shadow-lg w-full mx-auto flex flex-col justify-between cursor-pointer"
-                onClick={() => setShowModal(true)}> 
+                onClick={setNFT}> 
                 <div>
                     <div className="overflow-hidden rounded-lg mb-4 aspect-square">
                         <img
@@ -69,7 +89,7 @@ const Card = ({ nft }: { nft: NftType }) => {
                     <button 
                         onClick={(e) => {
                             e.stopPropagation(); // prevent bubbling to parent div
-                            setShowModal(true);
+                            setNFT();
                         }}
                         className="bg-transparent border border-[#d1aaff] text-[#d1aaff] px-3 py-1 text-sm cursor-pointer rounded-full 
                                 hover:bg-[#d1aaff] hover:text-[#10001a] transition hover:scale-105">
@@ -78,7 +98,7 @@ const Card = ({ nft }: { nft: NftType }) => {
                 </div>
             </div>
             
-            <ShowNFT showModal={showModal} setShowModal={setShowModal} nft={nft} />
+            {/* <ShowNFT showModal={showModal} setShowModal={setShowModal} nft={nft} /> */}
         </>
     );
 };

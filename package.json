@@ -9,6 +9,7 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "@polkadot/react-identicon": "^3.13.1",
     "ipfs-http-client": "^59.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

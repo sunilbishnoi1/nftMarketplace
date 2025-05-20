@@ -1,6 +1,7 @@
 import { FaTimes } from "react-icons/fa";
-import Identicon from "react-identicons";
+import Identicon from "@polkadot/react-identicon";
 import { setAlert, setGlobalState, truncate, useGlobalState } from "../store";
+import { buyNFT } from "../Blockchain.services";
 
 const ShowNFT = ({ showModal, setShowModal, nft }: { showModal: boolean; setShowModal: (val: boolean) => void; nft: any }) => {
     const [globalConnectedAccount] = useGlobalState('connectedAccount');
@@ -18,10 +19,18 @@ const ShowNFT = ({ showModal, setShowModal, nft }: { showModal: boolean; setShow
         setGlobalState('updateModal', 'scale-100');
     };
 
-    const OnPurchaseNow = () => {
+    const OnPurchaseNow = async () => {
         setShowModal(false);
         setGlobalState('showModal', 'scale-0')
         setGlobalState('loading', { show: true, msg: 'Initializing NFT transfer...',})
+        try{
+            await buyNFT(nft)
+            setAlert('NFT purchased successfully','green')
+            window.location.reload()
+        } catch(error){
+            console.log('Error purchasing NFT', error)
+            setAlert('Purchase failed!!', 'red')
+        }
     };
 
     return (
@@ -47,8 +56,9 @@ const ShowNFT = ({ showModal, setShowModal, nft }: { showModal: boolean; setShow
                 <div className="flex items-center gap-32 mt-3 text-[#d1aaff]">
                     <div className="flex ml-20">
                         <Identicon
-                            string={nft.owner}
+                            value={nft.owner}
                             size={50}
+                            theme="polkadot"
                             className="h-10 w-10 object-contain rounded-full mr-3" 
                             />
                             <div className="flex flex-col justify-center items-start">
