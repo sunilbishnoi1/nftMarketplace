@@ -11,6 +11,17 @@ module.exports = {
       port: 8545,
       network_id: '*', // Match any network id
     },
+    sepolia: {
+      provider: () => new HDWalletProvider(
+        process.env.MNEMONIC,
+        `https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}`
+      ),
+      network_id: 11155111,
+      gas: 5500000,
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun: true
+    }
   },
   contracts_directory: './src/contracts/',
   contracts_build_directory: './src/abis/',

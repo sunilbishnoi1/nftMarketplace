@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ShowNFT from "./ShowNFT"; 
 import type { NftType } from "../store";
 import { setGlobalState, useGlobalState } from "../store";
+import { getIPFSGatewayURL } from "../services/FilebaseService";
 
 const Artworks = () => {
     const [nfts] = useGlobalState('nfts');
@@ -10,7 +11,10 @@ const Artworks = () => {
     const [collection,setCollection] = useState<NftType[]>([])
 
     const getCollection = () => {
-        return nfts.slice(0,end)
+        return nfts.slice(0,end).map(nft => ({
+            ...nft,
+            image: getIPFSGatewayURL(nft.image)
+        }));
     }
 
     useEffect(() => {
@@ -42,12 +46,14 @@ const Artworks = () => {
                         <Card key={i} nft={nft} />
                     ))}
                 </div>
-
+                
+                {collection.length > 0 && nfts.length > collection.length ? (
                 <button 
                     className="bg-[#d1aaff] text-[#10001a] px-4 py-2 mt-6 rounded-md font-semibold hover:bg-[#aa66ff] transition mx-auto block"
                     onClick={() => setEnd(end + count)} >
                     Load More
                 </button>
+                ) : null }
             </div>
         </div>
         </>

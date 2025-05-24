@@ -1,21 +1,7 @@
 import React, { useState } from "react";
 import { mintNFT, getAllNfts } from "../Blockchain.services";
 import {useGlobalState, setGlobalState, setLoadingMsg, setAlert} from "../store";
-import {create} from 'ipfs-http-client'
-
-const projectId = process.env.REACT_APP_IPFS_PROJECT_ID
-const projectSecret = process.env.REACT_APP_INFURIA_API
-
-const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
-
-const client = create({
-    host: 'ipfs.infura.io',
-    port: 5001,
-    protocol: 'https',
-    headers: {
-        authorization: auth,
-    },
-})
+import { uploadToIPFS } from "../services/FilebaseService";
 
 const CreateNFT = ({ setShowNFTForm }: { setShowNFTForm: (show: boolean) => void }) => {
     const [modal] = useGlobalState('modal')
@@ -38,14 +24,13 @@ const CreateNFT = ({ setShowNFTForm }: { setShowNFTForm: (show: boolean) => void
 
     // Handle Mint Now action
     const handleMint = async(e: React.MouseEvent<HTMLButtonElement>) => {
-        if (!title || !price || !description) return
+        if (!title || !price || !description || !file) return
 
         setGlobalState('modal', 'scale-0')
         setGlobalState('loading', { show: true, msg: 'Uploading IPFS data...' })
 
         try {
-            const created = await client.add(file!)
-            const metadataURI = `https://ipfs.io/ipfs/${created.path}`
+            const metadataURI = await uploadToIPFS(file)
             const nft = { title, price, description, metadataURI }
 
             setLoadingMsg('Initializing transaction...')

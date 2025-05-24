@@ -11,9 +11,18 @@ import UpdateNFT from "./components/UpdateNFT";
 import Loading from "./components/Loading";
 import { useGlobalState } from "./store";
 import CreateNFT from "./components/CreateNFT";
+import { useEffect } from "react";
+import { getAllNfts } from "./Blockchain.services";
 
 function App (){
   const [loadingState] = useGlobalState('loading');
+
+  useEffect(() => {
+    const fetchNfts = async () => {
+      await getAllNfts();
+    };
+    fetchNfts();
+  }, []);
 
   return (
     <div className="min-h-screen">
