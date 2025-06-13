@@ -23,7 +23,7 @@ module.exports = function override(config) {
     // Add plugins
     config.plugins = (config.plugins || []).concat([
         new webpack.ProvidePlugin({
-            process: 'process/browser',
+            process: './node_modules/process/browser.js',
             Buffer: ['buffer', 'Buffer']
         })
     ]);
