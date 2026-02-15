@@ -10,13 +10,23 @@ import Features from "./pages/Features"
 import UpdateNFT from "./components/UpdateNFT";
 import Loading from "./components/Loading";
 import { useGlobalState } from "./store";
+import { useEffect } from "react";
+import { getAllNfts, isWalletConnected } from "./Blockchain.services";
 
 function App (){
   const [loadingState] = useGlobalState('loading');
 
+  useEffect(() => {
+    const fetchNfts = async () => {
+      await isWalletConnected();
+      await getAllNfts();
+    };
+    fetchNfts();
+  }, []);
+
   return (
     <div className="min-h-screen">
-    <Header />
+      <Header />
       <Routes>
         <Route
           path="/"
@@ -32,7 +42,6 @@ function App (){
         <Route path="/features" element={<Features />} />
         <Route path="/community" element={<Community />} />
       </Routes>
-      
       <UpdateNFT />
       <Footer />
       {loadingState.show && <Loading />}

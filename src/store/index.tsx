@@ -1,13 +1,15 @@
 import { createGlobalState } from 'react-hooks-global-state'
 
 export interface NftType {
-  id: string | number;
+  id: number;
   owner: string;
-  image: string;
+  creator: string;
+  cost: string; 
   title: string;
   description: string;
-  price: string | number; 
-  // Add other NFT props, e.g., metadata, tokenId, etc.
+  metadataURI: string;
+  timestamp: string | number;
+  image: string;
 }
 
 interface GlobalState {
@@ -17,10 +19,10 @@ interface GlobalState {
   alert: { show: boolean; msg: string; color: string };
   loading: { show: boolean; msg: string };
   connectedAccount: string;
-  nft: NftType | null; // Use NftType for now but we might have to change it later
-  nfts: NftType[]; // Using NftType array for now but we might have to change it later
-  transactions: any[]; // Define TransactionType when structure is known
-  contract: any | null; // Define ContractType if using ethers.js or similar
+  nft: NftType | null; 
+  nfts: NftType[]; 
+  transactions: any[]; 
+  contract: any | null; 
 }
 
 const initialState: GlobalState = {

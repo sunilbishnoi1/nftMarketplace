@@ -3,3 +3,4 @@
 
 ##don't use style.css to define props of each classes.
 ##instead utilize tailwind's utility-based CSS classes
+#There was some problem with metamask and smart contract creation check that too.
