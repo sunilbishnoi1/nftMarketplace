@@ -10,7 +10,6 @@ contract Aurora is ERC721Enumerable, Ownable {
     mapping(string => uint8) existingURIs;
     mapping(uint256 => address) public holderOf;
 
-    address public artist;
     uint256 public royalityFee;
     uint256 public supply = 0;
     uint256 public totalTx = 0;
@@ -27,6 +26,7 @@ contract Aurora is ERC721Enumerable, Ownable {
     struct TransactionStruct {
         uint256 id;
         address owner;
+        address creator;
         uint256 cost;
         string title;
         string description;
@@ -40,11 +40,13 @@ contract Aurora is ERC721Enumerable, Ownable {
     constructor(
         string memory _name,
         string memory _symbol,
-        uint256 _royalityFee,
-        address _artist
+        uint256 _royalityFee
     ) ERC721(_name, _symbol) {
         royalityFee = _royalityFee;
-        artist = _artist;
+    }
+
+    function changeCost(uint256 _newCost) public onlyOwner {
+        cost = _newCost;
     }
 
     function payToMint(
@@ -55,11 +57,8 @@ contract Aurora is ERC721Enumerable, Ownable {
     ) external payable {
         require(msg.value >= cost, "Ether too low for minting!");
         require(existingURIs[metadataURI] == 0, "This NFT is already minted!");
-        
 
-        uint256 royality = (msg.value * royalityFee) / 100;
-        payTo(artist, royality);
-        payTo(owner(), (msg.value - royality));
+        payTo(owner(), msg.value);
 
         supply++;
 
@@ -67,6 +66,7 @@ contract Aurora is ERC721Enumerable, Ownable {
             TransactionStruct(
                 supply,
                 msg.sender,
+                msg.sender, 
                 salesPrice,
                 title,
                 description,
@@ -93,7 +93,9 @@ contract Aurora is ERC721Enumerable, Ownable {
         require(msg.sender != minted[id - 1].owner, "Operation Not Allowed!");
 
         uint256 royality = (msg.value * royalityFee) / 100;
-        payTo(artist, royality);
+        
+        payTo(minted[id - 1].creator, royality);
+        
         payTo(minted[id - 1].owner, (msg.value - royality));
 
         totalTx++;
@@ -102,6 +104,7 @@ contract Aurora is ERC721Enumerable, Ownable {
             TransactionStruct(
                 totalTx,
                 msg.sender,
+                minted[id - 1].creator,
                 msg.value,
                 minted[id - 1].title,
                 minted[id - 1].description,
@@ -118,6 +121,7 @@ contract Aurora is ERC721Enumerable, Ownable {
             block.timestamp
         );
 
+        _transfer(minted[id - 1].owner, msg.sender, id);
         minted[id - 1].owner = msg.sender;
     }
 

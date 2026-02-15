@@ -1,112 +1,160 @@
 import React, { useEffect, useState } from "react";
-import ShowNFT from "./ShowNFT"; 
+import ShowNFT from "./ShowNFT";
 import type { NftType } from "../store";
 import { setGlobalState, useGlobalState } from "../store";
-import { getIPFSGatewayURL } from "../services/FilebaseService";
+import { FaEthereum, FaCrown } from "react-icons/fa";
 
 const Artworks = () => {
-    const [nfts] = useGlobalState('nfts');
-    const [end,setEnd] = useState(4);
-    const [count] = useState(4)
-    const [collection,setCollection] = useState<NftType[]>([])
+  const [nfts] = useGlobalState('nfts');
+  const [connectedAccount] = useGlobalState('connectedAccount');
+  const [end, setEnd] = useState(8);
+  const [count] = useState(8);
+  const [allCollection, setAllCollection] = useState<NftType[]>([]);
+  const [ownedCollection, setOwnedCollection] = useState<NftType[]>([]);
+  const [showModal] = useGlobalState('showModal');
+  const [nft, setNft] = useGlobalState('nft');
 
-    const getCollection = () => {
-        return nfts.slice(0,end).map(nft => ({
-            ...nft,
-            image: getIPFSGatewayURL(nft.image)
-        }));
+  useEffect(() => {
+    if (connectedAccount) {
+      const owned = nfts.filter((nft: NftType) => 
+        nft.owner.toLowerCase() === connectedAccount.toLowerCase()
+      );
+      setOwnedCollection(owned);
+    } else {
+      setOwnedCollection([]);
     }
+    
+    setAllCollection(nfts.slice(0, end));
+  }, [nfts, end, connectedAccount]);
 
-    useEffect(() => {
-        setCollection(getCollection());
-    }, [nfts,end]);
-
-
-    // Example NFT data - will replace later with useGlobalState('nft') data
-    const artworksData: NftType[] = Array.from({ length: 4 }).map((_, index) => ({
-        id: `artwork-${index + 1}`,
-        image: `/nft-img${index + 3}.png`, 
-        title: `Artistic Aura #${index + 1}`,
-        description: "A unique piece of digital art from the 'Aura' collection, exploring themes of color and light.",
-        price: `${index + 8}`, 
-        owner: `0xOwner${index + 1}SampleAddress0000000000000000`, 
-    }));
-
-
-    return (
-        <>
-        <div className="bg-gradient-to-br from-[#10001a] to-[#190727] w-full overflow-hidden">
-            <div className="w-4/5 py-10 mx-auto">
-                <h4 className="text-[#d1aaff] text-3xl font-bold uppercase text-gradient">
-                    Latest Artworks
-                </h4>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-4">
-                    {collection.map((nft, i) => ( 
-                        <Card key={i} nft={nft} />
-                    ))}
-                </div>
-                
-                {collection.length > 0 && nfts.length > collection.length ? (
-                <button 
-                    className="bg-[#d1aaff] text-[#10001a] px-4 py-2 mt-6 rounded-md font-semibold hover:bg-[#aa66ff] transition mx-auto block"
-                    onClick={() => setEnd(end + count)} >
-                    Load More
-                </button>
-                ) : null }
+  return (
+    <>
+      <div className="min-h-screen bg-black pt-28 pb-16">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          
+          {ownedCollection.length > 0 && (
+            <div className="mb-20">
+              <div className="flex items-center space-x-3 mb-8">
+                <FaCrown className="text-3xl text-amber-400" />
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400 bg-clip-text text-transparent">
+                  Your Collection
+                </h2>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {ownedCollection.map((nft, i) => (
+                  <Card key={`owned-${i}`} nft={nft} isOwned={true} />
+                ))}
+              </div>
             </div>
+          )}
+
+          <div>
+            <div className="mb-8">
+              <h2 className="text-4xl font-bold bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400 bg-clip-text text-transparent mb-2">
+                Discover Artworks
+              </h2>
+              <p className="text-gray-400">Explore the latest NFT collections</p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {allCollection.map((nft, i) => (
+                <Card 
+                  key={`all-${i}`} 
+                  nft={nft} 
+                  isOwned={connectedAccount ? nft.owner.toLowerCase() === connectedAccount.toLowerCase() : false}
+                />
+              ))}
+            </div>
+
+            {nfts.length > allCollection.length && (
+              <div className="flex justify-center mt-12">
+                <button
+                  className="relative group px-8 py-4 rounded-xl font-semibold text-white transition-all duration-300 overflow-hidden"
+                  onClick={() => setEnd(end + count)}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-violet-600 to-fuchsia-600 group-hover:scale-105 transition-transform duration-300"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-violet-600 to-fuchsia-600 blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
+                  <span className="relative z-10">Load More</span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-        </>
-    );
+      </div>
+
+      {showModal === 'scale-100' && (
+        <ShowNFT 
+          showModal={showModal === 'scale-100'} 
+          setShowModal={(val: boolean) => setGlobalState('showModal', val ? 'scale-100' : 'scale-0')} 
+          nft={nft} 
+        />
+      )}
+    </>
+  );
 };
 
-const Card = ({ nft }: { nft: NftType }) => { 
-    const setNFT = () => {
-        setGlobalState('nft', nft);
-        setGlobalState('showModal', 'scale-100');
-    }
-    // const [showModal, setShowModal] = useState(false);
+const Card = ({ nft, isOwned }: { nft: NftType; isOwned?: boolean }) => {
+  const setNFT = () => {
+    setGlobalState('nft', nft);
+    setGlobalState('showModal', 'scale-100');
+  };
 
-    return (
-        <>
-            <div className="bg-gradient-to-br from-[#1a032a] via-[#10001a] to-[#190727] rounded-xl p-4 shadow-lg w-full mx-auto flex flex-col justify-between cursor-pointer"
-                onClick={setNFT}> 
-                <div>
-                    <div className="overflow-hidden rounded-lg mb-4 aspect-square">
-                        <img
-                            src={nft.image}
-                            alt={nft.title}
-                            className="h-full w-full object-cover transform transition-transform duration-300 hover:scale-110"
-                        />
-                    </div>
-                    <h4 className="text-[#d1aaff] text-xl font-bold uppercase mb-1 truncate">
-                        {nft.title}
-                    </h4>
-                    <p className="text-[#d1aaff] text-xs mb-4 text-gradient h-10 overflow-hidden text-ellipsis">
-                        {nft.description}
-                    </p>
-                </div>
-                <div className="flex justify-between items-center mt-3 text-[#d1aaff]">
-                    <div className="text-[#d1aaff]">
-                        <small className="text-xs block">Current Price</small>
-                        <p className="text-sm font-semibold">{nft.price} ETH</p>
-                    </div>
+  return (
+    <div 
+      className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-violet-500/20"
+      onClick={setNFT}
+    >
+      {isOwned && (
+        <div className="absolute top-4 right-4 z-10 px-3 py-1 bg-amber-500/20 backdrop-blur-sm border border-amber-500/30 rounded-full flex items-center space-x-1">
+          <FaCrown className="text-amber-400 text-sm" />
+          <span className="text-amber-400 text-xs font-bold">OWNED</span>
+        </div>
+      )}
 
-                    <button 
-                        onClick={(e) => {
-                            e.stopPropagation(); // prevent bubbling to parent div
-                            setNFT();
-                        }}
-                        className="bg-transparent border border-[#d1aaff] text-[#d1aaff] px-3 py-1 text-sm cursor-pointer rounded-full 
-                                hover:bg-[#d1aaff] hover:text-[#10001a] transition hover:scale-105">
-                        View Details
-                    </button>
-                </div>
+      <div className="absolute inset-0 bg-gradient-to-t from-violet-600/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+
+      <div className="relative aspect-square overflow-hidden">
+        <img
+          src={nft.image}
+          alt={nft.title}
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60"></div>
+      </div>
+
+      <div className="p-5 space-y-4">
+        <div>
+          <h3 className="text-xl font-bold text-white mb-2 truncate group-hover:text-violet-400 transition-colors duration-300">
+            {nft.title}
+          </h3>
+          <p className="text-sm text-gray-400 line-clamp-2 leading-relaxed">
+            {nft.description}
+          </p>
+        </div>
+
+        <div className="flex items-center justify-between pt-4 border-t border-white/10">
+          <div className="flex items-center space-x-2">
+            <FaEthereum className="text-violet-400 text-lg" />
+            <div>
+              <p className="text-xs text-gray-500">Price</p>
+              <p className="text-sm font-bold text-white">{nft.cost} ETH</p>
             </div>
-            
-            {/* <ShowNFT showModal={showModal} setShowModal={setShowModal} nft={nft} /> */}
-        </>
-    );
+          </div>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setNFT();
+            }}
+            className="px-4 py-2 bg-white/5 hover:bg-violet-600 border border-white/10 hover:border-violet-500 rounded-lg text-sm font-medium text-white transition-all duration-300 group-hover:shadow-lg group-hover:shadow-violet-500/30"
+          >
+            View
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Artworks;

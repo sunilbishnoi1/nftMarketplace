@@ -10,15 +10,15 @@ import Features from "./pages/Features"
 import UpdateNFT from "./components/UpdateNFT";
 import Loading from "./components/Loading";
 import { useGlobalState } from "./store";
-import CreateNFT from "./components/CreateNFT";
 import { useEffect } from "react";
-import { getAllNfts } from "./Blockchain.services";
+import { getAllNfts, isWalletConnected } from "./Blockchain.services";
 
 function App (){
   const [loadingState] = useGlobalState('loading');
 
   useEffect(() => {
     const fetchNfts = async () => {
+      await isWalletConnected();
       await getAllNfts();
     };
     fetchNfts();

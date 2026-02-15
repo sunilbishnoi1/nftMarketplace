@@ -1,7 +1,9 @@
-import { S3Client, PutObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 
 const projectId = process.env.REACT_APP_FILEBASE_IPFS_ACCESS_KEY;
 const projectSecret = process.env.REACT_APP_FILEBASE_IPFS_SECRET_KEY;
+const bucketName = process.env.REACT_APP_FILEBASE_BUCKET_NAME || "nft-marketplace-ipfs";
+const gatewayUrl = process.env.REACT_APP_IPFS_GATEWAY_URL || "https://ipfs.filebase.io/ipfs";
 
 if (!projectId || !projectSecret) {
     throw new Error('Filebase credentials are not configured');
@@ -17,57 +19,94 @@ const client = new S3Client({
     forcePathStyle: true,
 });
 
-export const uploadToIPFS = async (file: File) => {
+export const uploadFileToIPFS = async (fileOrBuffer: File | Buffer | string, key: string, contentType: string) => {
     try {
-        // Convert File to ArrayBuffer
-        const arrayBuffer = await file.arrayBuffer();
-        const uint8Array = new Uint8Array(arrayBuffer);
-        
-        // Generate a unique key for the file
-        const key = `${Date.now()}-${file.name}`;
-        
+        let body;
+        if (fileOrBuffer instanceof File) {
+            const arrayBuffer = await fileOrBuffer.arrayBuffer();
+            body = new Uint8Array(arrayBuffer);
+        } else if (typeof fileOrBuffer === 'string') {
+            body = Buffer.from(fileOrBuffer);
+        } else {
+            body = fileOrBuffer;
+        }
+
         const command = new PutObjectCommand({
-            Bucket: 'nft-marketplace-ipfs',
+            Bucket: bucketName,
             Key: key,
-            Body: uint8Array,
-            ContentType: file.type,
+            Body: body,
+            ContentType: contentType,
         });
 
         await client.send(command);
-        
-        // Return the Filebase IPFS gateway URL
-        return `https://ipfs.filebase.io/ipfs/${key}`;
+
+        const getObjectCommand = new GetObjectCommand({
+            Bucket: bucketName,
+            Key: key,
+        });
+
+        const objectData = await client.send(getObjectCommand);
+        const cid = objectData.Metadata ? objectData.Metadata['cid'] : null;
+
+        if (!cid) {
+            throw new Error("Failed to retrieve CID from Filebase");
+        }
+
+        const url = `${gatewayUrl}/${cid}`;
+        return { cid, url };
     } catch (error) {
-        console.error('Error uploading to Filebase:', error);
+        console.error('Error uploading file to Filebase:', error);
         throw error;
     }
 };
 
-export const getIPFSGatewayURL = (url: string) => {
-    // If it's already a Filebase URL, return as is
-    if (url.includes('filebase.com') || url.includes('filebase.io')) {
-        return url;
-    }
-    // If it's an IPFS hash, convert to Filebase gateway URL
-    if (url.includes('ipfs://')) {
-        const hash = url.replace('ipfs://', '');
-        return `https://ipfs.filebase.io/ipfs/${hash}`;
-    }
-    return url;
+/**
+ * Uploads an image to IPFS via Filebase
+ * @param file The image file to upload
+ * @returns Object containing CID, Gateway URL, and the generated Key
+ */
+// Uploads an image to IPFS via Filebase
+export const uploadNFTImage = async (file: File) => {
+    const key = `images/${Date.now()}-${file.name}`;
+    const result = await uploadFileToIPFS(file, key, file.type);
+    return { ...result, key };
 };
 
-export const listAllIPFSObjects = async () => {
-    try {
-        const command = new ListObjectsV2Command({
-            Bucket: 'nft-marketplace-ipfs',
-        });
-        const response = await client.send(command);
-        return response.Contents?.map(obj => ({
-            key: obj.Key,
-            url: `https://ipfs.filebase.io/ipfs/${obj.Key}`,
-        })) || [];
-    } catch (error) {
-        console.error('Error listing objects from Filebase:', error);
-        return [];
-    }
-}; 
+/**
+ * Uploads NFT metadata JSON to IPFS via Filebase
+ * @param metadata The metadata object (compliant with ERC721 metadata standard)
+ * @returns Object containing CID and Gateway URL of the metadata file
+ */
+export const uploadNFTMetadata = async (metadata: object) => {
+    const jsonString = JSON.stringify(metadata);
+    const key = `metadata/${Date.now()}-metadata.json`;
+    return await uploadFileToIPFS(jsonString, key, 'application/json');
+};
+
+/**
+ * High-level function to handle the full NFT upload process
+ * 1. Upload Image
+ * 2. Create Metadata with Image URI
+ * 3. Upload Metadata
+ * @returns The Metadata URI (e.g., ipfs://<CID> or gateway URL) to be used for minting
+ */
+export const uploadNFT = async (file: File, name: string, description: string, attributes: any[] = []) => {
+    const imageUpload = await uploadNFTImage(file);
+
+    const metadata = {
+        name,
+        description,
+        image: `ipfs://${imageUpload.cid}`, // Standard IPFS URI
+        external_url: imageUpload.url, // Gateway URL as fallback/external link
+        attributes,
+    };
+
+    const metadataUpload = await uploadNFTMetadata(metadata);
+
+    return metadataUpload.url;
+};
+
+export const getIPFSGatewayURL = (cid: string) => {
+    return `${gatewayUrl}/${cid}`;
+};
+
